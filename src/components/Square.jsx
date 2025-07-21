@@ -2,19 +2,21 @@ import { CrownOutlined } from '@ant-design/icons';
 
 import './Square.css'
 
+const baseUrl = import.meta.env.BASE_URL;
+
 const pieceImages = {
-  wp: '/assets/chess/wp.png',
-  wr: '/assets/chess/wr.png',
-  wn: '/assets/chess/wn.png',
-  wb: '/assets/chess/wb.png',
-  wq: '/assets/chess/wq.png',
-  wk: '/assets/chess/wk.png',
-  bp: '/assets/chess/bp.png',
-  br: '/assets/chess/br.png',
-  bn: '/assets/chess/bn.png',
-  bb: '/assets/chess/bb.png',
-  bq: '/assets/chess/bq.png',
-  bk: '/assets/chess/bk.png',
+  wp: `${baseUrl}assets/chess/wp.png`,
+  wr: `${baseUrl}assets/chess/wr.png`,
+  wn: `${baseUrl}assets/chess/wn.png`,
+  wb: `${baseUrl}assets/chess/wb.png`,
+  wq: `${baseUrl}assets/chess/wq.png`,
+  wk: `${baseUrl}assets/chess/wk.png`,
+  bp: `${baseUrl}assets/chess/bp.png`,
+  br: `${baseUrl}assets/chess/br.png`,
+  bn: `${baseUrl}assets/chess/bn.png`,
+  bb: `${baseUrl}assets/chess/bb.png`,
+  bq: `${baseUrl}assets/chess/bq.png`,
+  bk: `${baseUrl}assets/chess/bk.png`
 };
 
 function getSquareColor({ isBlack, isSelected, isHighlighted, isCapture, isLastMove }) {

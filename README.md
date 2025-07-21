@@ -1,87 +1,117 @@
-# React + Vite
+# AI Chess App - Giới thiệu
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Đây là một ứng dụng chơi cờ. Người chơi sẽ được thử sức với AI cờ vua sử dụng thuật toán Minimax, với các mức độ khó khác nhau. Giao diện của ứng dụng vẫn còn rất đơn giản và chưa có nhiều tính năng, nhưng mong có thể mang đến cho bạn một trò tiêu khiển thú vị.
 
-Currently, two official plugins are available:
+## Demo
+[Truy cập bản chơi thử tại đây](https://19406.github.io/AI-chess-app/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+> Ứng dụng chưa hỗ trợ "Bắt Tốt qua đường" (En passant).
 
-## Expanding the ESLint configuration
+# Các logic được xử lý
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Vẫn còn nhiều thứ chưa hoàn thiện, mình vẫn sẽ tiếp tục bổ sung thêm.
 
-___________________________________________________________________________________________________________________________
+## Luật điều khiển
 
-Đây là một ứng dụng chơi cờ. Nó có gì? Mở lên đi rồi biết! Bye.
+### Lượt chơi:
+- Trò chơi có 2 lượt: **Trắng** và **Đen**, thay đổi luân phiên nhau
+  - **Người chơi**: luôn là quân **Trắng**
+  - **AI cờ vua**:luôn là quân **Đen**
+### Độ khó:
+- Trò chơi có 3 mức độ khó:
+  - Dễ
+  - Trung bình
+  - Khó
+  
+  *(Đừng tin quá, người chơi nên tự chơi và tự cảm nhận)*
 
-CÁC LOGIC ĐƯỢC XỬ LÝ (nếu có thiếu sót gì mình sẽ bổ sung thêm):
+### Undo:
+- **Trò chơi có hỗ trợ đi lại**
+  - Nếu mới đi nước đầu tiên thì sẽ trả về trạng thái ban đầu
+  - Nếu trường hợp khác thì lùi bàn cờ về 2 nước và đổi lượt di chuyển hiện tại
 
-    _ CÁC LUẬT ĐIỀU KHIỂN:
-        + Trò chơi có 2 lượt: trắng và đen, sẽ thay đổi luân phiên.
-            <> Nếu undo mà mới đi được nước đầu tiên thì sẽ trả về trạng thái ban đầu.
-            <> Nếu trường hợp khác thì sẽ lùi bàn cờ về 2 nước và đổi lượt di chuyển hiện tại.
-        + Theo quy ước thì người chơi là quân trắng, còn AI cờ vua là quân đen.
-        + Có 3 mức độ khó:
-            <> Dễ
-            <> Trung bình
-            <> Khó
-            (Đừng tin quá, người chơi nên tự chơi và tự cảm nhận)
+## Luật di chuyển:
+| Quân cờ | Luật di chuyển |
+|---------|----------------|
+| **Tốt** | Nước đầu có thể tiến 2, các nước còn lại tiến 1 |
+| **Xe** | Đi dọc và đi ngang |
+| **Mã** | Đi hình chữ L, không bị chặn |
+| **Tượng** | Đi chéo |
+| **Hậu** | Đi chéo, đi dọc, đi ngang |
+| **Vua** | Đi đến các ô xung quanh nó <br> Không đi vào các ô có thể bị ăn <br> *(Vua không được chết trong cờ vua!)* <br> Có thể **nhập thành** với 1 trong 2 Xe |
 
-    _ CÁC LUẬT DI CHUYỂN:
-        + Quân TỐT:
-            <> Nước đầu có thể tiến 2, các nước còn lại tiến 1.
-        + Quân XE:
-            <> Đi dọc và đi ngang.
-        + Quân MÃ:
-            <> Đi hình chữ L, không bị chặn.
-        + Quân TƯỢNG:
-            <> Đi chéo.
-        + Quân HẬU:
-            <> Đi chéo, đi dọc, đi ngang.
-        + Quân VUA:
-            <> Đi đến các ô xung quanh nó.
-            <> Không đi vào các ô có thể bị ăn. (Vua không được chết trong cờ vua!)
-            <> Có thể NHẬP THÀNH với 1 trong 2 xe nếu:
-                # Cả Vua và Xe đó đều chưa từng di chuyển.
-                # Giữa Vua và Xe đó không có quân nào.
-                # Các ô giữa Vua và Xe đang không bị tấn công.
-                # Vua đang không bị chiếu.
-        + Nếu Vua đang bị chiếu, các quân của phe đó (kể cả Vua) chỉ được đi các nước thoát chiếu.
+### Điều kiện nhập thành:
+- *Cả Vua và Xe đó đều chưa từng di chuyển*
+- *Giữa Vua và Xe đó không có quân nào*
+- *Các ô giữa Vua và Xe đang không bị tấn công*
+- *Vua đang không bị chiếu*
+
+> Nếu Vua đang bị chiếu, các quân của phe đó (kể cả Vua) chỉ được đi các nước thoát chiếu
     
-    _ CÁC LUẬT ĂN QUÂN:
-        + Quân TỐT:
-            <> Ăn chéo (nhưng chỉ chéo tiến).
-            <> BẮT TỐT QUA ĐƯỜNG (ghi vậy chứ chưa có làm nha):
-                Nếu:
-                    # Quân tốt địch chỉ mới đi nước đầu tiên, và nước đó là tiến 2 bước.
-                    # Tốt phe ta đứng cạnh và cùng hàng với tốt địch phía trên.
-                
-                Thì tốt phe ta có thể ăn tốt địch và đi chéo lên cột của tốt địch đó.
-        + Các quân XE, MÃ, TƯỢNG, HẬU:
-            <> Đi được đến đâu là ăn được đến đó.
-        + Quân VUA:
-            <> Vẫn là đi được đến đâu thì ăn được đến đó; nhưng: không được ăn quân mà sau khi ăn xong sẽ có thể bị quân khác ăn lại. (Vua không được chết trong cờ vua!)
+## Luật ăn quân:
+### Quân TỐT:
+- Ăn chéo (nhưng chỉ chéo tiến)
 
-    _ KẾT THÚC VÁN CỜ:
-        + Nếu một bên đang bị chiếu và hết nước đi, bên đó bị chiếu hết và bên còn lại thắng.
-        + Nếu một bên hết nước đi mà không bị chiếu, ván cờ kết thúc ở thế hoà.
-        + Có thể hoà cờ nếu 2 bên không còn đủ quân (số quân đó không đủ để bất cứ bên nào chiếu hết!):
-            <> Bàn cờ chỉ còn 2 Vua.
-            <> Còn 2 Vua và 1 Tượng hoặc 2 Vua và 1 Mã.
-            <> Mỗi bên còn Vua và 1 Tượng, nhưng 2 Tượng cùng màu ô.
-        + Nếu một trạng thái của bàn cờ được lặp lại 3 lần thì ván cờ cũng sẽ kết thúc.
+### Bắt Tốt qua đường:
+- **Điều kiện**:
+  - Quân tốt địch chỉ mới đi nước đầu tiên, và nước đó là tiến 2 bước
+  - Tốt phe ta đứng cạnh và cùng hàng với tốt địch phía trên
 
+- **Nước đi**: Tốt phe ta có thể ăn tốt địch và đi chéo lên cột của tốt địch đó
 
-CÁC HIỆU ỨNG:
-    _ Người chơi nhìn thấy các nước đi khả thi của từng quân cờ phe mình.
-        + Nước đi vào ô trống sẽ có màu xanh lá.
-        + Nước đi ăn quân sẽ có màu đỏ.
-    _ Nước đi sau cùng của ván đấu sẽ được tô vàng để người chơi dễ quan sát (biết đối thủ đi chưa và đi đâu).
-    _ Nếu quân Vua (của bên bất kỳ) đang bị chiếu, ô của quân Vua đó sẽ chuyển sang đỏ và có hiệu ứng nhấp nháy.
+### Các quân XE, MÃ, TƯỢNG, HẬU:
+- Đi được đến đâu là ăn được đến đó.
+### Quân VUA:
+- Vẫn là đi được đến đâu thì ăn được đến đó; **nhưng:** không được ăn quân mà sau khi ăn xong sẽ có thể bị quân khác ăn lại
 
-TƯƠNG TÁC:
-    _ Chọn quân cờ sau đó chọn một ô mà nó có thể đi để thực hiện nước đi.
-    _ Bấm vào nút màu xanh dương bên dưới bàn cờ hoặc nhấn tổ hợp phím Ctrl + Z để undo.
-    _ Bấm vào biểu tượng reload màu xanh lá ở góc màn hình để bắt đầu trận mới.
-    _ Khi bắt đầu ván đấu, sẽ có cửa sổ pop-up hiện lên để chọn độ khó.
+*(Vua không được chết trong cờ vua!)*
+
+## Kết thúc ván cờ:
+- Nếu một bên đang bị chiếu và hết nước đi, bên đó bị chiếu hết và bên còn lại thắng
+- Nếu một bên hết nước đi mà không bị chiếu, ván cờ kết thúc ở thế hoà
+- Có thể hoà cờ nếu 2 bên không còn đủ quân (số quân đó không đủ để bất cứ bên nào chiếu hết!):
+  - Bàn cờ chỉ còn 2 Vua
+  - Còn 2 Vua và 1 Tượng hoặc 2 Vua và 1 Mã
+  - Mỗi bên còn Vua và 1 Tượng, nhưng 2 Tượng cùng màu ô
+- Nếu một trạng thái của bàn cờ được lặp lại 3 lần thì ván cờ cũng sẽ kết thúc
+
+# Hiệu ứng UI:
+## Giao diện:
+- Giao diện trò chơi bao gồm:
+  - Tag hiển thị lượt chơi hiện tại
+  - Dòng văn bản hiển thị độ khó
+  - Bàn cờ
+  - Nút undo màu xanh dương phía dưới bàn cờ
+  - Biểu tượng reload màu xanh lá ở góc trên bên phải màn hình
+## Nước đi khả thi:
+- Người chơi nhìn thấy các nước đi khả thi của từng quân cờ phe mình.
+  - Nước đi vào ô trống sẽ có màu xanh lá
+  - Nước đi ăn quân sẽ có màu đỏ
+## Nước đi cuối:
+- Nước đi sau cùng của ván đấu sẽ được tô vàng để người chơi dễ quan sát (biết đối thủ đi chưa và đi đâu)
+## Ô đang bị chiếu:
+- Nếu quân Vua (của bên bất kỳ) **đang bị chiếu**, ô của quân Vua đó sẽ chuyển sang đỏ và có hiệu ứng nhấp nháy
+
+# Tương tác:
+- **Thực hiện nước đi**: Chọn quân cờ sau đó chọn một ô mà nó có thể đi để thực hiện nước đi
+- **Undo**: Bấm vào nút màu xanh dương bên dưới bàn cờ hoặc nhấn tổ hợp phím Ctrl + Z để undo
+- **Bắt đầu trận mới**: Bấm vào biểu tượng reload màu xanh lá ở góc màn hình để bắt đầu trận mới
+- **Chọn độ khó**: Khi bắt đầu ván mới, sẽ có cửa sổ pop-up hiện lên để chọn độ khó
+
+# Công nghệ sử dụng
+
+- [React](https://react.dev/)
+- [Vite](https://vitejs.dev/)
+- Web Worker cho AI
+- Thuật toán Minimax + Alpha-Beta Pruning
+
+# Cài đặt và chạy local
+
+```bash
+git clone https://github.com/19406/AI-chess-app.git
+cd AI-chess-app
+npm install
+npm run dev
+```
+
+> Nhưng mà chơi online bằng đường dẫn trên phần demo đi chứ chạy local chi cho cực!
